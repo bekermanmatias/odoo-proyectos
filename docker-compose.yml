@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   web:
-    image: odoo:19.0 # Actualizado a la última versión estable
+    build: .
+    image: odoo-custom:19.0
     depends_on:
       - db
     ports:
