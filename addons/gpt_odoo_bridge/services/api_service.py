@@ -12,7 +12,7 @@ import os
 import secrets
 from datetime import timedelta
 
-from odoo import api, fields, tools
+from odoo import SUPERUSER_ID, api, fields, tools
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.modules.registry import Registry
 
@@ -126,10 +126,12 @@ class GptApiService:
         user_id = cls.integration_user_id()
         registry = Registry(db_name)
         cr = registry.cursor()
-        env = api.Environment(cr, user_id, {})
-        if not env.user.exists() or not env.user.active:
+        root_env = api.Environment(cr, SUPERUSER_ID, {})
+        user = root_env["res.users"].browse(user_id).exists()
+        if not user or not user.active:
             cr.close()
             raise GptApiError(503, "configuration_error", "The GPT integration user is unavailable.")
+        env = api.Environment(cr, user_id, {})
         return env
 
     @staticmethod
