@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install gettext
+        run: sudo apt-get update && sudo apt-get install -y gettext-base
+
+      - name: Check repository hygiene
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! find . -type f \( -name '*.pyc' -o -path '*/__pycache__/*' \) -print -quit | grep -q .
+          ! grep -RIn --exclude-dir=.git --exclude='*.png' --exclude='*.jpg' --exclude='*.svg' \
+            -E 'admin_passwd[[:space:]]*=[[:space:]]+[^$[:space:]]|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY' .
+
+      - name: Validate Compose configuration
+        run: |
+          envsubst '${ODOO_ADMIN_PASSWORD}' < config/odoo.conf.template > config/odoo.conf
+          cp .env.example .env
+          sed -i 's#https://odoo.example.com/web/login#http://127.0.0.1:8069/web/login#' .env
+          docker compose config --quiet
+        env:
+          ODOO_ADMIN_PASSWORD: ci-admin-password
+
+      - name: Build image
+        run: docker compose build web
+
+      - name: Run Odoo module tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker compose up -d db
+          docker compose run --rm web odoo \
+            -c /etc/odoo/odoo.conf \
+            --db_host=db --db_port=5432 --db_user=odoo --db_password=ci-password \
+            -d ci_test --init="muk_web_appsbar,muk_web_chatter,muk_web_colors,muk_web_dialog,muk_web_group,muk_web_refresh,muk_web_theme" \
+            --without-demo=all --test-enable --stop-after-init --log-level=test
+        env:
+          ODOO_PASSWORD: ci-password
+          POSTGRES_PASSWORD: ci-password
+          ODOO_ADMIN_PASSWORD: ci-admin-password
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v
+
+  deploy:
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install SSH key and discover VPS host key
+        shell: bash
+        env:
+          VPS_SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+        run: |
+          set -euo pipefail
+          test -n "$VPS_SSH_PRIVATE_KEY"
+          test -n "$VPS_HOST"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VPS_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$VPS_HOST" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy over SSH
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_DEPLOY_PATH: ${{ secrets.VPS_DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          test -n "$VPS_HOST"
+          test -n "$VPS_USER"
+          test -n "$VPS_DEPLOY_PATH"
+          ssh "$VPS_USER@$VPS_HOST" \
+            "cd '$VPS_DEPLOY_PATH' && bash scripts/deploy.sh"

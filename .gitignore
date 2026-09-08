@@ -1,5 +1,13 @@
-# Docker secrets
+# Docker secrets and generated runtime configuration
 .env
+config/odoo.conf
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Deployment artifacts
+backups/
 
 # MacOS folders
 .DS_Store

@@ -1,4 +1,4 @@
 [options]
-admin_passwd = 07092015Leyla@
+admin_passwd = ${ODOO_ADMIN_PASSWORD}
 data_dir = /var/lib/odoo
 addons_path = /mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons,/var/lib/odoo/addons/19.0,/usr/lib/python3/dist-packages/addons
