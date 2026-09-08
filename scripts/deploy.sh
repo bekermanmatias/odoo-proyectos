@@ -30,7 +30,7 @@ rollback() {
     docker compose exec -T db createdb -U odoo "$ODOO_DB_NAME"
     gunzip -c "$backup_file" | docker compose exec -T db pg_restore -U odoo -d "$ODOO_DB_NAME" --no-owner --clean --if-exists
   fi
-  docker compose up -d --build
+  docker compose up -d --build --force-recreate web
 }
 trap rollback ERR
 
@@ -75,7 +75,7 @@ else
     --db_host=db --db_port=5432 --db_user=odoo --db_password="$ODOO_PASSWORD" \
     --init="base,$module_list" --without-demo=1 --stop-after-init --no-http
 fi
-docker compose up -d web
+docker compose up -d --force-recreate web
 
 for attempt in {1..30}; do
   if curl --fail --silent --show-error --max-time 10 "$HEALTHCHECK_URL" >/dev/null; then
