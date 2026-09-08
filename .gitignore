@@ -1,6 +1,5 @@
 # Docker secrets and generated runtime configuration
 .env
-config/odoo.conf
 
 # Python bytecode
 __pycache__/

@@ -19,6 +19,7 @@ Configurar estos secrets en el environment `production`:
 
 En el VPS debe existir `.env` con los valores de `.env.example`. No subirlo al repositorio.
 La provisión crea un backup diario a las 02:00 UTC y conserva 14 días de backups.
+En producción se restringe Odoo a la base definida en `ODOO_DB_NAME` y se desactiva el gestor público de bases de datos.
 
 Para un VPS limpio, ejecutar como root, definiendo `REPO_URL`, `DOMAIN` y `DEPLOY_PUBLIC_KEY`:
 
