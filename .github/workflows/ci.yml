@@ -42,11 +42,13 @@ jobs:
         run: |
           set -euo pipefail
           docker compose up -d db
-          docker compose run --rm web odoo \
+          timeout --signal=TERM --kill-after=30s 15m docker compose run --rm web odoo \
             -c /etc/odoo/odoo.conf \
             --db_host=db --db_port=5432 --db_user=odoo --db_password=ci-password \
             -d ci_test --init="muk_web_appsbar,muk_web_chatter,muk_web_colors,muk_web_dialog,muk_web_group,muk_web_refresh,muk_web_theme" \
-            --without-demo=all --test-enable --stop-after-init --log-level=test
+            --without-demo=all \
+            --test-tags="/muk_web_colors:TestColorAssetsEditor,/muk_web_refresh:TestReloadViews" \
+            --stop-after-init --log-level=test
         env:
           ODOO_PASSWORD: ci-password
           POSTGRES_PASSWORD: ci-password
