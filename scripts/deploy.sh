@@ -37,7 +37,8 @@ trap rollback ERR
 render_config() {
   command -v envsubst >/dev/null || { echo 'gettext-base/envsubst is required' >&2; exit 1; }
   envsubst '${ODOO_ADMIN_PASSWORD} ${ODOO_DB_NAME}' < config/odoo.conf.template > config/odoo.conf
-  chmod 600 config/odoo.conf
+  # The Odoo container runs as the `odoo` user, not as the VPS deploy user.
+  chmod 644 config/odoo.conf
 }
 
 git fetch origin main
