@@ -45,7 +45,7 @@ values = {
     "email": login,
     "active": True,
     "share": False,
-    "groups_id": [(6, 0, groups.ids)],
+    "group_ids": [(6, 0, groups.ids)],
 }
 if user:
     user.write(values)
