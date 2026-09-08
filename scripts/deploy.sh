@@ -36,9 +36,11 @@ trap rollback ERR
 
 render_config() {
   command -v envsubst >/dev/null || { echo 'gettext-base/envsubst is required' >&2; exit 1; }
+  umask 022
+  chmod 755 config
+  rm -f config/odoo.conf
   envsubst '${ODOO_ADMIN_PASSWORD} ${ODOO_DB_NAME}' < config/odoo.conf.template > config/odoo.conf
   # The Odoo container runs as the `odoo` user, not as the VPS deploy user.
-  chmod 755 config
   chmod 644 config/odoo.conf
 }
 
@@ -57,6 +59,7 @@ fi
 find backups -type f -name '*.dump.gz' -mtime +14 -delete
 
 docker compose build web
+docker compose run --rm --no-deps --entrypoint sh web -c 'id; ls -ld /etc/odoo; ls -l /etc/odoo/odoo.conf; test -r /etc/odoo/odoo.conf; head -n 4 /etc/odoo/odoo.conf'
 docker compose up -d
 module_list="$(tr ' ' ',' <<< "$ODOO_MODULES")"
 if docker compose exec -T db psql -U odoo -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='$ODOO_DB_NAME'" | grep -q 1; then
