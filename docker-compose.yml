@@ -15,6 +15,10 @@ services:
       HOST: db
       USER: odoo
       PASSWORD: ${ODOO_PASSWORD:?ODOO_PASSWORD is required}
+      ODOO_DB_NAME: ${ODOO_DB_NAME:?ODOO_DB_NAME is required}
+      GPT_ODOO_API_KEY: ${GPT_ODOO_API_KEY:-}
+      GPT_ODOO_USER_ID: ${GPT_ODOO_USER_ID:-0}
+      GPT_ODOO_USER_LOGIN: ${GPT_ODOO_USER_LOGIN:-}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8069/web/login', timeout=5)"]

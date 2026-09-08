@@ -61,6 +61,9 @@ find backups -type f -name '*.dump.gz' -mtime +14 -delete
 docker compose build web
 docker compose run --rm --no-deps --entrypoint sh web -c 'id; ls -ld /etc/odoo; ls -l /etc/odoo/odoo.conf; test -r /etc/odoo/odoo.conf; head -n 4 /etc/odoo/odoo.conf'
 module_list="$(tr ' ' ',' <<< "$ODOO_MODULES")"
+if [[ ",$module_list," != *",gpt_odoo_bridge,"* ]]; then
+  module_list="${module_list:+$module_list,}gpt_odoo_bridge"
+fi
 if docker compose exec -T db psql -U odoo -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='$ODOO_DB_NAME'" | grep -q 1; then
   docker compose run --rm web odoo \
     -c /etc/odoo/odoo.conf -d "$ODOO_DB_NAME" \

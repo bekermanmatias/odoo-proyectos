@@ -45,9 +45,9 @@ jobs:
           timeout --signal=TERM --kill-after=30s 15m docker compose run --rm web odoo \
             -c /etc/odoo/odoo.conf \
             --db_host=db --db_port=5432 --db_user=odoo --db_password=ci-password \
-            -d ci_test --init="muk_web_appsbar,muk_web_chatter,muk_web_colors,muk_web_dialog,muk_web_group,muk_web_refresh,muk_web_theme" \
+            -d ci_test --init="project,gpt_odoo_bridge,muk_web_appsbar,muk_web_chatter,muk_web_colors,muk_web_dialog,muk_web_group,muk_web_refresh,muk_web_theme" \
             --without-demo=1 \
-            --test-tags="/muk_web_colors:TestColorAssetsEditor,/muk_web_refresh:TestReloadViews" \
+            --test-tags="/gpt_odoo_bridge,/muk_web_colors:TestColorAssetsEditor,/muk_web_refresh:TestReloadViews" \
             --stop-after-init --log-level=test
         env:
           ODOO_PASSWORD: ci-password
