@@ -34,12 +34,16 @@ RESOURCE_SPECS = {
     },
     "tasks": {
         "module": "project", "model": "project.task",
-        "fields": ["id", "name", "project_id", "partner_id", "user_ids", "stage_id", "date_deadline", "planned_date_begin", "description", "priority", "active"],
-        "write": ["name", "project_id", "partner_id", "user_ids", "stage_id", "date_deadline", "planned_date_begin", "description", "priority", "active"],
+        "fields": ["id", "name", "project_id", "partner_id", "user_ids", "stage_id", "tag_ids", "date_deadline", "planned_date_begin", "description", "priority", "active"],
+        "write": ["name", "project_id", "partner_id", "user_ids", "stage_id", "tag_ids", "date_deadline", "planned_date_begin", "description", "priority", "active"],
     },
     "task-stages": {
         "module": "project", "model": "project.task.type",
         "fields": ["id", "name", "sequence", "fold"], "write": ["name", "sequence", "fold"],
+    },
+    "task-tags": {
+        "module": "project", "model": "project.tags",
+        "fields": ["id", "name", "color"], "write": ["name", "color"],
     },
     "contacts": {
         "module": "base", "model": "res.partner",

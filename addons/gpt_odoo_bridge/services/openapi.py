@@ -4,7 +4,7 @@
 def openapi_document():
     resource_parameter = {
         "name": "resource", "in": "path", "required": True,
-        "schema": {"type": "string", "enum": ["projects", "tasks", "task-stages", "contacts", "leads", "lead-stages", "quotations", "invoices", "products", "stock-transfers", "calendar-events", "activities"]},
+        "schema": {"type": "string", "enum": ["projects", "tasks", "task-stages", "task-tags", "contacts", "leads", "lead-stages", "quotations", "invoices", "products", "stock-transfers", "calendar-events", "activities"]},
     }
     record_id_parameter = {
         "name": "record_id", "in": "path", "required": True,
@@ -29,13 +29,15 @@ def openapi_document():
                         "name": {"type": "string"}, "description": {"type": "string"},
                         "project_id": {"type": "integer"}, "partner_id": {"type": "integer"},
                         "user_id": {"type": "integer"}, "stage_id": {"type": "integer"},
+                        "tag_ids": {"type": "array", "items": {"type": "integer"}},
+                        "priority": {"type": "string", "enum": ["0", "1", "2", "3"], "description": "Task priority: 0 normal, 1 low, 2 high, 3 urgent (three stars)."},
                         "date_deadline": {"type": "string"}, "email": {"type": "string"},
                         "phone": {"type": "string"}, "note": {"type": "string"},
                         "ref": {"type": "string"}, "invoice_date": {"type": "string"},
                     },
                     "additionalProperties": True,
                 },
-                "Resource": {"type": "string", "enum": ["projects", "tasks", "task-stages", "contacts", "leads", "lead-stages", "quotations", "invoices", "products", "stock-transfers", "calendar-events", "activities"]},
+                "Resource": {"type": "string", "enum": ["projects", "tasks", "task-stages", "task-tags", "contacts", "leads", "lead-stages", "quotations", "invoices", "products", "stock-transfers", "calendar-events", "activities"]},
                 "Error": {"type": "object", "properties": {"error": {"type": "object"}, "correlation_id": {"type": "string"}}},
             },
         },

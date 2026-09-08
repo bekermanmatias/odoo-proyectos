@@ -26,6 +26,16 @@ class TestGptApi(TransactionCase):
         )
         self.assertEqual(audit.technical_user_id, self.env.user)
 
+    def test_tasks_can_use_existing_tags_and_priority(self):
+        project = self.env["project.project"].create({"name": "Task tag project"})
+        tag = self.env["project.tags"].create({"name": "Backend"})
+        task = GptApiService.create_record(self.env, "tasks", {
+            "name": "Urgent tagged task", "project_id": project.id,
+            "tag_ids": [tag.id], "priority": "3",
+        })["record"]
+        self.assertEqual(task["priority"], "3")
+        self.assertEqual(task["tag_ids"], [tag.id])
+
     def test_delete_requires_confirmation(self):
         project = self.env["project.project"].create({"name": "Delete after confirmation"})
         pending = GptApiService.request_confirmation(
