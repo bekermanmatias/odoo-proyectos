@@ -60,7 +60,6 @@ find backups -type f -name '*.dump.gz' -mtime +14 -delete
 
 docker compose build web
 docker compose run --rm --no-deps --entrypoint sh web -c 'id; ls -ld /etc/odoo; ls -l /etc/odoo/odoo.conf; test -r /etc/odoo/odoo.conf; head -n 4 /etc/odoo/odoo.conf'
-docker compose up -d
 module_list="$(tr ' ' ',' <<< "$ODOO_MODULES")"
 if docker compose exec -T db psql -U odoo -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='$ODOO_DB_NAME'" | grep -q 1; then
   docker compose run --rm web odoo \
@@ -71,7 +70,7 @@ else
   docker compose run --rm web odoo \
     -c /etc/odoo/odoo.conf -d "$ODOO_DB_NAME" \
     --db_host=db --db_port=5432 --db_user=odoo --db_password="$ODOO_PASSWORD" \
-    --init="base,$module_list" --without-demo=all --stop-after-init --no-http
+    --init="base,$module_list" --without-demo=1 --stop-after-init --no-http
 fi
 docker compose up -d web
 
