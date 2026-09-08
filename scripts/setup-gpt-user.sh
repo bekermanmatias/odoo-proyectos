@@ -53,5 +53,7 @@ else:
     values["password"] = secrets.token_urlsafe(48)
     user = env["res.users"].sudo().create(values)
 
+# `odoo shell` does not commit its cursor automatically on exit.
+env.cr.commit()
 print(f"GPT_ODOO_USER_ID={user.id}")
 PY

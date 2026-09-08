@@ -68,7 +68,7 @@ if docker compose exec -T db psql -U odoo -d postgres -tAc "SELECT 1 FROM pg_dat
   docker compose run --rm web odoo \
     -c /etc/odoo/odoo.conf -d "$ODOO_DB_NAME" \
     --db_host=db --db_port=5432 --db_user=odoo --db_password="$ODOO_PASSWORD" \
-    --update="$module_list" --stop-after-init --no-http
+    --init="gpt_odoo_bridge" --update="$module_list" --stop-after-init --no-http
 else
   docker compose run --rm web odoo \
     -c /etc/odoo/odoo.conf -d "$ODOO_DB_NAME" \
