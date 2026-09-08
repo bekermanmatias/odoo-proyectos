@@ -4,8 +4,9 @@
     "version": "19.0.1.0.0",
     "category": "Tools",
     "license": "LGPL-3",
+    "author": "Pupuia",
     "depends": ["base"],
-    "data": [],
+    "data": ["security/ir.model.access.csv"],
     "installable": True,
     "application": False,
 }

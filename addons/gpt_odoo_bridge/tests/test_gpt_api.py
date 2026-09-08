@@ -1,10 +1,12 @@
 from unittest.mock import patch
 
+from odoo.tests import tagged
 from odoo.tests.common import TransactionCase
 
 from odoo.addons.gpt_odoo_bridge.services.api_service import GptApiError, GptApiService
 
 
+@tagged("post_install", "-at_install")
 class TestGptApi(TransactionCase):
     def test_api_key_is_required(self):
         with patch.dict("os.environ", {"GPT_ODOO_API_KEY": "test-key"}, clear=False):
