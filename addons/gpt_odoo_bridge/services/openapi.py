@@ -26,7 +26,11 @@ def openapi_document():
                     "type": "object",
                     "description": "Allowed fields depend on the resource and are returned by getCapabilities.",
                     "properties": {
-                        "name": {"type": "string"}, "description": {"type": "string"},
+                        "name": {"type": "string"},
+                        "description": {
+                            "type": "string",
+                            "description": "Rich Odoo HTML. Use semantic <h2>, <h3>, <p>, <ul>, <ol>, <li>, and <strong>; do not use Markdown, inline CSS, or long unstructured text.",
+                        },
                         "project_id": {"type": "integer"}, "partner_id": {"type": "integer"},
                         "project_ids": {"type": "array", "items": {"type": "integer"}, "description": "Projects linked to a task stage."},
                         "user_id": {"type": "integer"}, "stage_id": {"type": "integer"},

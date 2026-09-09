@@ -36,6 +36,21 @@ class TestGptApi(TransactionCase):
         self.assertEqual(task["priority"], "3")
         self.assertEqual(task["tag_ids"], [tag.id])
 
+    def test_task_description_preserves_semantic_html(self):
+        project = self.env["project.project"].create({"name": "Rich description project"})
+        description = (
+            "<h2>Objetivo</h2><p>Crear una inscripción clara.</p>"
+            "<h2>Alcance</h2><ul><li>Formulario</li><li>Validación</li></ul>"
+            "<h2>Criterios de aceptación</h2><p><strong>Sin errores</strong> al enviar.</p>"
+        )
+        task = GptApiService.create_record(self.env, "tasks", {
+            "name": "Task with rich description", "project_id": project.id,
+            "description": description,
+        })["record"]
+        self.assertIn("<h2>Objetivo</h2>", task["description"])
+        self.assertIn("<ul><li>Formulario</li><li>Validación</li></ul>", task["description"])
+        self.assertIn("<strong>Sin errores</strong>", task["description"])
+
     def test_task_stages_can_be_linked_to_one_project(self):
         project = self.env["project.project"].create({"name": "Rock and Gol stage project"})
         stage = GptApiService.create_record(self.env, "task-stages", {
