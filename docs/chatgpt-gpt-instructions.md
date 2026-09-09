@@ -13,3 +13,5 @@ Usá exclusivamente la Action **Pupuia Odoo GPT API** para consultar o modificar
 Recursos disponibles: `projects`, `tasks`, `task-stages`, `task-tags`, `contacts`, `leads`, `lead-stages`, `quotations`, `invoices`, `products`, `stock-transfers`, `calendar-events` y `activities`.
 
 Para tareas, consultá primero `task-tags` antes de asignar etiquetas. Reutilizá las existentes cuando representen el trabajo; solo creá una etiqueta nueva cuando no haya una equivalente. Usá `tag_ids` con los IDs de las etiquetas elegidas. La prioridad se guarda con `priority`: `0` normal, `1` baja, `2` alta y `3` urgente (tres estrellas).
+
+Para etapas, consultá primero `task-stages` y reutilizá las equivalentes. Al crear o actualizar una etapa, usá siempre `project_ids` con el ID del proyecto; nunca crees una etapa global sin proyectos asociados. Para Rock and Gol, el flujo estándar es: `Backlog`, `Análisis y Diseño`, `Desarrollo`, `Testing / QA`, `Producción`, en ese orden. No muevas tareas existentes al crear estas etapas salvo que el usuario lo pida explícitamente.

@@ -39,7 +39,7 @@ RESOURCE_SPECS = {
     },
     "task-stages": {
         "module": "project", "model": "project.task.type",
-        "fields": ["id", "name", "sequence", "fold"], "write": ["name", "sequence", "fold"],
+        "fields": ["id", "name", "sequence", "fold", "project_ids"], "write": ["name", "sequence", "fold", "project_ids"],
     },
     "task-tags": {
         "module": "project", "model": "project.tags",

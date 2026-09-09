@@ -28,6 +28,7 @@ def openapi_document():
                     "properties": {
                         "name": {"type": "string"}, "description": {"type": "string"},
                         "project_id": {"type": "integer"}, "partner_id": {"type": "integer"},
+                        "project_ids": {"type": "array", "items": {"type": "integer"}, "description": "Projects linked to a task stage."},
                         "user_id": {"type": "integer"}, "stage_id": {"type": "integer"},
                         "tag_ids": {"type": "array", "items": {"type": "integer"}},
                         "priority": {"type": "string", "enum": ["0", "1", "2", "3"], "description": "Task priority: 0 normal, 1 low, 2 high, 3 urgent (three stars)."},

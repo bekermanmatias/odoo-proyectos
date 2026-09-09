@@ -36,6 +36,18 @@ class TestGptApi(TransactionCase):
         self.assertEqual(task["priority"], "3")
         self.assertEqual(task["tag_ids"], [tag.id])
 
+    def test_task_stages_can_be_linked_to_one_project(self):
+        project = self.env["project.project"].create({"name": "Rock and Gol stage project"})
+        stage = GptApiService.create_record(self.env, "task-stages", {
+            "name": "Backlog", "sequence": 1, "project_ids": [project.id],
+        })["record"]
+        self.assertEqual(stage["project_ids"], [project.id])
+
+        stages = GptApiService.list_records(
+            self.env, "task-stages", {"project_ids": project.id}, limit=100,
+        )["records"]
+        self.assertTrue(any(row["id"] == stage["id"] for row in stages))
+
     def test_delete_requires_confirmation(self):
         project = self.env["project.project"].create({"name": "Delete after confirmation"})
         pending = GptApiService.request_confirmation(
